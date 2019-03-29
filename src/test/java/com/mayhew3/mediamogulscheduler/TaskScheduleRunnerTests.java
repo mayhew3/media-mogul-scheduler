@@ -2,7 +2,7 @@ package com.mayhew3.mediamogulscheduler;
 
 import org.junit.Test;
 
-public class HerokuApplicationTests {
+public class TaskScheduleRunnerTests {
 
 	@Test
 	public void contextLoads() {

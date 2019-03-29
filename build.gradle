@@ -10,7 +10,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 group = 'com.mayhew3.mediamogulscheduler'
-version = '0.5'
+version = '0.5.1'
 sourceCompatibility = '1.8'
 
 repositories {
@@ -18,18 +18,23 @@ repositories {
 }
 
 dependencies {
+	compile group: 'org.springframework.amqp', name: 'spring-amqp', version:'1.4.3.RELEASE'
+	compile group: 'org.springframework.amqp', name: 'spring-rabbit', version:'1.4.3.RELEASE'
+	compile group: 'org.springframework', name: 'spring-context', version:'4.1.4.RELEASE'
 	testCompile 'junit:junit:4.12'
 }
 
 jar {
 	manifest {
-		attributes("Implementation-Title": "Gradle",
+		attributes("Implementation-Title": "Task Schedule Runner",
 				"Implementation-Version": version,
-				"Main-Class": "com.mayhew3.mediamogulscheduler.HerokuApplication")
+				"Main-Class": "com.mayhew3.mediamogulscheduler.TaskScheduleRunner")
 	}
+	archiveFileName = "media-mogul-scheduler.jar"
+	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
-task stage(dependsOn: ['assemble', 'clean'])
-assemble.mustRunAfter clean
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
 
-mainClassName = 'com.mayhew3.mediamogulscheduler.HerokuApplication'
+mainClassName = 'com.mayhew3.mediamogulscheduler.TaskScheduleRunner'
