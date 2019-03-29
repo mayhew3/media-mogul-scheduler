@@ -1,1 +1,1 @@
-web: java -jar build/libs/gradle-getting-started-1.0.jar
+worker: java -jar build/libs/media-mogul-scheduler-0.5.jar
