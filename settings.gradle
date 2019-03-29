@@ -1,1 +1,5 @@
 rootProject.name = 'media-mogul-scheduler'
+
+include 'task-executor'
+include 'task-scheduler'
+

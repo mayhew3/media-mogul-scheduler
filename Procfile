@@ -1,1 +1,1 @@
-worker: java -jar build/libs/media-mogul-scheduler.jar
+executor: java -jar task-executor/build/libs/task-executor.jar

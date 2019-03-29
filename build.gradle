@@ -1,47 +1,7 @@
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-	}
-}
-
 apply plugin: 'java'
-apply plugin: 'application'
 
 group = 'com.mayhew3.mediamogulscheduler'
-version = '0.5.1'
-sourceCompatibility = '1.8'
-
-repositories {
-	mavenCentral()
-}
-
-dependencies {
-	compile group: 'org.springframework.amqp', name: 'spring-amqp', version:'1.4.3.RELEASE'
-	compile group: 'org.springframework.amqp', name: 'spring-rabbit', version:'1.4.3.RELEASE'
-	compile group: 'org.springframework', name: 'spring-context', version:'4.1.4.RELEASE'
-	testCompile 'junit:junit:4.12'
-}
-
-jar {
-	manifest {
-		attributes("Implementation-Title": "Task Schedule Runner",
-				"Implementation-Version": version,
-				"Main-Class": "com.mayhew3.mediamogulscheduler.TaskScheduleRunner")
-	}
-	archiveFileName = "media-mogul-scheduler.jar"
-//	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-}
+version = '0.5.2'
 
 task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
-
-task copyToLib(type: Copy) {
-	into "$buildDir/libs"
-	from(configurations.compile)
-}
-
-stage.dependsOn(copyToLib)
-
-mainClassName = 'com.mayhew3.mediamogulscheduler.TaskScheduleRunner'
