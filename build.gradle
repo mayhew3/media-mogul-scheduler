@@ -1,5 +1,7 @@
 apply plugin: 'java'
 
+sourceCompatibility = 1.8
+
 group = 'com.mayhew3.mediamogulscheduler'
 
 buildscript {
