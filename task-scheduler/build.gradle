@@ -2,22 +2,4 @@ plugins {
     id 'java'
 }
 
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'com.github.johnrengelman.shadow'
-
-group 'com.mayhew3.mediamogulscheduler'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
-apply from: file("$rootProject.projectDir/gradle/heroku/stage.gradle")
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-
 mainClassName = 'com.mayhew3.mediamogulscheduler.TaskScheduler'
