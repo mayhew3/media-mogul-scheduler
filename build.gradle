@@ -1,7 +1,14 @@
 apply plugin: 'java'
 
 group = 'com.mayhew3.mediamogulscheduler'
-version = '0.5.2'
 
-task stage(dependsOn: ['build', 'clean'])
-build.mustRunAfter clean
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
+}
+
+apply from: file('gradle/heroku/clean.gradle')
