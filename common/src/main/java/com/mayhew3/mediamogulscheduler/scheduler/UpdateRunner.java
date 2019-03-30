@@ -1,5 +1,6 @@
-package com.mayhew3.mediamogulscheduler;
+package com.mayhew3.mediamogulscheduler.scheduler;
 
+import com.mayhew3.mediamogulscheduler.tv.helper.UpdateMode;
 import com.mayhew3.postgresobject.db.SQLConnection;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,5 +22,5 @@ public interface UpdateRunner {
     }
   }
 
-  void runUpdate(SQLConnection connection) throws SQLException, InterruptedException, IOException;
+  void runUpdate() throws SQLException, InterruptedException, IOException;
 }

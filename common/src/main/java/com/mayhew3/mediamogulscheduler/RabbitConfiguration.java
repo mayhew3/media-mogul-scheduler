@@ -17,7 +17,7 @@ import static java.lang.System.getenv;
 @Configuration
 public class RabbitConfiguration {
 
-  protected final String helloWorldQueueName = "hello.world.queue";
+  protected final String helloWorldQueueName = "mm.local.queue";
 
   @Bean
   public ConnectionFactory connectionFactory() {

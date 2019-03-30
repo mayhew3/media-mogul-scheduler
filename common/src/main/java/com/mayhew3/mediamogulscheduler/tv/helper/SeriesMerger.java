@@ -50,7 +50,7 @@ public class SeriesMerger {
     SeriesMerger seriesMerger = new SeriesMerger(unmatchedSeries.get(), baseSeries.get(), connection);
     seriesMerger.executeMerge();
 
-    new SeriesDenormUpdater().runUpdate(connection);
+    new SeriesDenormUpdater(connection).runUpdate();
   }
 
   public void executeMerge() throws SQLException, ShowFailedException {

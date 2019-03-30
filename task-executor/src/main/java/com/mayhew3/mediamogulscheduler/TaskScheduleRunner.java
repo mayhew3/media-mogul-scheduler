@@ -1,5 +1,6 @@
 package com.mayhew3.mediamogulscheduler;
 
+import com.mayhew3.mediamogulscheduler.tv.SeriesDenormFactory;
 import com.mayhew3.mediamogulscheduler.tv.SeriesDenormUpdater;
 import com.mayhew3.postgresobject.db.PostgresConnectionFactory;
 import com.mayhew3.postgresobject.db.SQLConnection;
@@ -38,18 +39,21 @@ public class TaskScheduleRunner {
 
     // set the callback for message handling
     listenerContainer.setMessageListener((MessageListener) message -> {
-      Object receivedMessage = messageConverter.fromMessage(message);
-      if (receivedMessage instanceof SeriesDenormUpdater) {
-        final SeriesDenormUpdater seriesDenormUpdater = (SeriesDenormUpdater) receivedMessage;
+      if (message.getMessageProperties().getConsumerQueue().equalsIgnoreCase("mm.local.queue")) {
+        Object receivedMessage = messageConverter.fromMessage(message);
+        if (receivedMessage instanceof SeriesDenormFactory) {
+          final SeriesDenormFactory seriesDenormFactory = (SeriesDenormFactory) receivedMessage;
 
-        // simply printing out the operation, but expensive computation could happen here
-        System.out.println("Received from RabbitMQ: " + seriesDenormUpdater);
+          // simply printing out the operation, but expensive computation could happen here
+          System.out.println("Received from RabbitMQ: " + seriesDenormFactory);
 
-        try {
-          seriesDenormUpdater.runUpdate(connection);
-        } catch (SQLException e) {
-          e.printStackTrace();
-          throw new RuntimeException("Error running update.");
+          try {
+            SeriesDenormUpdater updater = seriesDenormFactory.generate(connection);
+            updater.runUpdate();
+          } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error running update.");
+          }
         }
       }
     });

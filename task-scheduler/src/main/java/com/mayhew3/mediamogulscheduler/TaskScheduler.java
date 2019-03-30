@@ -1,5 +1,6 @@
 package com.mayhew3.mediamogulscheduler;
 
+import com.mayhew3.mediamogulscheduler.tv.SeriesDenormFactory;
 import com.mayhew3.mediamogulscheduler.tv.SeriesDenormUpdater;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
@@ -41,10 +42,10 @@ public class TaskScheduler {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-      SeriesDenormUpdater updater = new SeriesDenormUpdater();
+      SeriesDenormFactory factory = new SeriesDenormFactory();
 
-      amqpTemplate.convertAndSend(updater);
-      logger.info("Sent to RabbitMQ: " + updater);
+      amqpTemplate.convertAndSend(factory);
+      logger.info("Sent to RabbitMQ: " + factory);
     }
   }
 }

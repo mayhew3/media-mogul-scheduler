@@ -1,7 +1,7 @@
 package com.mayhew3.mediamogulscheduler.tv;
 
-import com.mayhew3.mediamogulscheduler.UpdateMode;
-import com.mayhew3.mediamogulscheduler.UpdateRunner;
+import com.mayhew3.mediamogulscheduler.tv.helper.UpdateMode;
+import com.mayhew3.mediamogulscheduler.scheduler.UpdateRunner;
 import com.mayhew3.postgresobject.db.SQLConnection;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,6 +11,10 @@ import java.sql.SQLException;
 public class SeriesDenormUpdater implements UpdateRunner, Serializable {
 
   private SQLConnection connection;
+
+  public SeriesDenormUpdater(SQLConnection connection) {
+    this.connection = connection;
+  }
 
   @Override
   public String getRunnerName() {
@@ -22,9 +26,7 @@ public class SeriesDenormUpdater implements UpdateRunner, Serializable {
     return null;
   }
 
-  public void runUpdate(SQLConnection connection) throws SQLException {
-    this.connection = connection;
-
+  public void runUpdate() throws SQLException {
     debug("Updating denorms...");
     updateUnmatchedEpisodes();
     updateActiveEpisodes();

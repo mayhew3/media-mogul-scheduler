@@ -1,4 +1,4 @@
-package com.mayhew3.mediamogulscheduler;
+package com.mayhew3.mediamogulscheduler.tv.helper;
 
 import com.google.common.collect.Lists;
 import com.mayhew3.postgresobject.ArgumentChecker;
