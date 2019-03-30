@@ -15,8 +15,6 @@ apply from: file('gradle/heroku/clean.gradle')
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'application'
-    apply plugin: 'com.github.johnrengelman.shadow'
 
     group 'com.mayhew3.mediamogulscheduler'
 
@@ -24,9 +22,8 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
-
-    apply from: file("$rootProject.projectDir/gradle/heroku/stage.gradle")
 
     dependencies {
         compile group: 'org.springframework.amqp', name: 'spring-amqp', version:'1.4.3.RELEASE'
