@@ -1,5 +1,6 @@
 package com.mayhew3.mediamogulscheduler;
 
+import com.mayhew3.mediamogulscheduler.tv.SeriesDenormUpdater;
 import com.mayhew3.postgresobject.db.PostgresConnectionFactory;
 import com.mayhew3.postgresobject.db.SQLConnection;
 import org.springframework.amqp.core.MessageListener;

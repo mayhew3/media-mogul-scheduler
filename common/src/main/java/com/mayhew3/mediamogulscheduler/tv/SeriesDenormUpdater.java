@@ -1,5 +1,7 @@
-package com.mayhew3.mediamogulscheduler;
+package com.mayhew3.mediamogulscheduler.tv;
 
+import com.mayhew3.mediamogulscheduler.UpdateMode;
+import com.mayhew3.mediamogulscheduler.UpdateRunner;
 import com.mayhew3.postgresobject.db.SQLConnection;
 import org.jetbrains.annotations.Nullable;
 

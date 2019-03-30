@@ -1,5 +1,6 @@
 package com.mayhew3.mediamogulscheduler;
 
+import com.mayhew3.mediamogulscheduler.tv.SeriesDenormUpdater;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
