@@ -1,7 +1,9 @@
 package com.mayhew3.mediamogulscheduler.scheduler;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mayhew3.mediamogulscheduler.tv.helper.UpdateMode;
 import com.mayhew3.postgresobject.db.SQLConnection;
+import org.apache.http.auth.AuthenticationException;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -22,5 +24,5 @@ public interface UpdateRunner {
     }
   }
 
-  void runUpdate() throws SQLException, InterruptedException, IOException;
+  void runUpdate() throws SQLException, InterruptedException, IOException, UnirestException, AuthenticationException;
 }
