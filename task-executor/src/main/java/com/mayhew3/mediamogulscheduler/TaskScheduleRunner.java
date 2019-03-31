@@ -1,6 +1,13 @@
 package com.mayhew3.mediamogulscheduler;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mayhew3.mediamogulscheduler.games.IGDBUpdateRunner;
+import com.mayhew3.mediamogulscheduler.games.SteamGameUpdater;
+import com.mayhew3.mediamogulscheduler.games.SteamPlaySessionGenerator;
+import com.mayhew3.mediamogulscheduler.games.provider.IGDBProvider;
+import com.mayhew3.mediamogulscheduler.games.provider.IGDBProviderImpl;
+import com.mayhew3.mediamogulscheduler.games.provider.SteamProvider;
+import com.mayhew3.mediamogulscheduler.games.provider.SteamProviderImpl;
 import com.mayhew3.mediamogulscheduler.scheduler.UpdateRunner;
 import com.mayhew3.mediamogulscheduler.tv.*;
 import com.mayhew3.mediamogulscheduler.tv.helper.ConnectionLogger;
@@ -31,15 +38,19 @@ public class TaskScheduleRunner {
   private TVDBJWTProvider tvdbjwtProvider;
   private JSONReader jsonReader;
   ExternalServiceHandler howLongServiceHandler;
+  private IGDBProvider igdbProvider;
+  private SteamProvider steamProvider;
 
   private TaskScheduleRunner(SQLConnection connection,
                              @Nullable TVDBJWTProvider tvdbjwtProvider,
                              JSONReader jsonReader,
-                             ExternalServiceHandler howLongServiceHandler) {
+                             ExternalServiceHandler howLongServiceHandler, IGDBProvider igdbProvider, SteamProvider steamProvider) {
     this.connection = connection;
     this.tvdbjwtProvider = tvdbjwtProvider;
     this.jsonReader = jsonReader;
     this.howLongServiceHandler = howLongServiceHandler;
+    this.igdbProvider = igdbProvider;
+    this.steamProvider = steamProvider;
   }
 
   public static void main(String... args) throws URISyntaxException, SQLException, InterruptedException {
@@ -52,6 +63,7 @@ public class TaskScheduleRunner {
     JSONReader jsonReader = new JSONReaderImpl();
     ExternalServiceHandler tvdbServiceHandler = new ExternalServiceHandler(connection, ExternalServiceType.TVDB);
     ExternalServiceHandler howLongServiceHandler = new ExternalServiceHandler(connection, ExternalServiceType.HowLongToBeat);
+    IGDBProviderImpl igdbProvider = new IGDBProviderImpl();
 
     TVDBJWTProvider tvdbjwtProvider = null;
     try {
@@ -66,7 +78,9 @@ public class TaskScheduleRunner {
         connection,
         tvdbjwtProvider,
         jsonReader,
-        howLongServiceHandler);
+        howLongServiceHandler,
+        igdbProvider,
+        new SteamProviderImpl());
     taskScheduleRunner.runUpdates();
   }
 
@@ -82,8 +96,14 @@ public class TaskScheduleRunner {
         1);
     addPeriodicTask(new TVDBSeriesMatchRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.SMART),
         3);
+    addPeriodicTask(new IGDBUpdateRunner(connection, igdbProvider, jsonReader, UpdateMode.SMART),
+        5);
+    addPeriodicTask(new SteamPlaySessionGenerator(connection, 1),
+        10);
     addPeriodicTask(new TVDBUpdateRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.SMART),
         30);
+    addPeriodicTask(new SteamGameUpdater(connection, 1, steamProvider),
+        60);
     addPeriodicTask(new CloudinaryUploader(connection, UpdateMode.QUICK),
         60);
 
