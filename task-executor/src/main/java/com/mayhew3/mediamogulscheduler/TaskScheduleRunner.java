@@ -1,7 +1,15 @@
 package com.mayhew3.mediamogulscheduler;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mayhew3.mediamogulscheduler.tv.SeriesDenormFactory;
 import com.mayhew3.mediamogulscheduler.tv.SeriesDenormUpdater;
+import com.mayhew3.mediamogulscheduler.tv.TVDBUpdateRunner;
+import com.mayhew3.mediamogulscheduler.tv.TVDBUpdateRunnerFactory;
+import com.mayhew3.mediamogulscheduler.tv.helper.UpdateMode;
+import com.mayhew3.mediamogulscheduler.tv.provider.TVDBJWTProvider;
+import com.mayhew3.mediamogulscheduler.tv.provider.TVDBJWTProviderImpl;
+import com.mayhew3.mediamogulscheduler.xml.JSONReader;
+import com.mayhew3.mediamogulscheduler.xml.JSONReaderImpl;
 import com.mayhew3.postgresobject.db.PostgresConnectionFactory;
 import com.mayhew3.postgresobject.db.SQLConnection;
 import org.springframework.amqp.core.MessageListener;
@@ -18,7 +26,7 @@ import java.sql.SQLException;
 
 public class TaskScheduleRunner {
 
-  public static void main(String[] args) throws URISyntaxException, SQLException {
+  public static void main(String[] args) throws URISyntaxException, SQLException, UnirestException {
     final ApplicationContext rabbitConfig = new AnnotationConfigApplicationContext(RabbitConfiguration.class);
     final ConnectionFactory rabbitConnectionFactory = rabbitConfig.getBean(ConnectionFactory.class);
     final Queue rabbitQueue = rabbitConfig.getBean(Queue.class);
@@ -30,6 +38,9 @@ public class TaskScheduleRunner {
     }
 
     final SQLConnection connection = PostgresConnectionFactory.initiateDBConnect(postgresURL_heroku);
+    final ExternalServiceHandler tvdbService = new ExternalServiceHandler(connection, ExternalServiceType.TVDB);
+    final TVDBJWTProvider tvdbjwtProvider = new TVDBJWTProviderImpl(tvdbService);
+    final JSONReader jsonReader = new JSONReaderImpl();
 
     // create a listener container, which is required for asynchronous message consumption.
     // AmqpTemplate cannot be used in this case
@@ -49,6 +60,19 @@ public class TaskScheduleRunner {
 
           try {
             SeriesDenormUpdater updater = seriesDenormFactory.generate(connection);
+            updater.runUpdate();
+          } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error running update.");
+          }
+        } else if (receivedMessage instanceof TVDBUpdateRunnerFactory) {
+          final TVDBUpdateRunnerFactory factory = (TVDBUpdateRunnerFactory) receivedMessage;
+
+          // simply printing out the operation, but expensive computation could happen here
+          System.out.println("Received from RabbitMQ: " + factory);
+
+          try {
+            TVDBUpdateRunner updater = factory.generate(connection, tvdbjwtProvider, jsonReader, factory.getUpdateMode());
             updater.runUpdate();
           } catch (SQLException e) {
             e.printStackTrace();

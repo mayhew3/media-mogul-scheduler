@@ -3,9 +3,10 @@ package com.mayhew3.mediamogulscheduler.tv.helper;
 import com.google.common.collect.Lists;
 import com.mayhew3.postgresobject.ArgumentChecker;
 
+import java.io.Serializable;
 import java.util.Optional;
 
-public enum UpdateMode {
+public enum UpdateMode implements Serializable {
   FULL("Full"),
   SMART("Smart"),
   FEW_ERRORS("FewErrors"),
