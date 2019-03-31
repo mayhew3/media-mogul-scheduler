@@ -1,10 +1,8 @@
 package com.mayhew3.mediamogulscheduler;
 
-import com.google.common.collect.Lists;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mayhew3.mediamogulscheduler.scheduler.UpdateRunner;
-import com.mayhew3.mediamogulscheduler.tv.SeriesDenormUpdater;
-import com.mayhew3.mediamogulscheduler.tv.TVDBUpdateRunner;
+import com.mayhew3.mediamogulscheduler.tv.*;
 import com.mayhew3.mediamogulscheduler.tv.helper.ConnectionLogger;
 import com.mayhew3.mediamogulscheduler.tv.helper.UpdateMode;
 import com.mayhew3.mediamogulscheduler.tv.provider.TVDBJWTProvider;
@@ -15,7 +13,6 @@ import com.mayhew3.postgresobject.db.PostgresConnectionFactory;
 import com.mayhew3.postgresobject.db.SQLConnection;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -77,26 +74,24 @@ public class TaskScheduleRunner {
     // REGULAR
     addPeriodicTask(new SeriesDenormUpdater(connection),
         5);
-/*    addPeriodicTask(new TVDBUpdateRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.MANUAL),
+    addPeriodicTask(new TVDBUpdateRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.MANUAL),
         1);
     addPeriodicTask(new TVDBUpdateFinder(connection, tvdbjwtProvider, jsonReader),
         2);
     addPeriodicTask(new TVDBUpdateProcessor(connection, tvdbjwtProvider, jsonReader),
         1);
     addPeriodicTask(new TVDBSeriesMatchRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.SMART),
-        3);*/
+        3);
     addPeriodicTask(new TVDBUpdateRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.SMART),
         30);
-    /*
     addPeriodicTask(new CloudinaryUploader(connection, UpdateMode.QUICK),
         60);
 
     // NIGHTLY
-    addNightlyTask(new MetacriticTVUpdater(connection, UpdateMode.FULL));
+//    addNightlyTask(new MetacriticTVUpdater(connection, UpdateMode.FULL));
     addNightlyTask(new TVDBUpdateRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.SANITY));
     addNightlyTask(new EpisodeGroupUpdater(connection));
     addNightlyTask(new CloudinaryUploader(connection, UpdateMode.FULL));
-  */
   }
 
   private void addPeriodicTask(UpdateRunner updateRunner, Integer minutesBetween) {
