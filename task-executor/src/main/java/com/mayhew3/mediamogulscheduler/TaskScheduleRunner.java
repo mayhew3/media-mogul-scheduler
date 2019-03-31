@@ -1,6 +1,7 @@
 package com.mayhew3.mediamogulscheduler;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mayhew3.mediamogulscheduler.games.GiantBombUpdater;
 import com.mayhew3.mediamogulscheduler.games.IGDBUpdateRunner;
 import com.mayhew3.mediamogulscheduler.games.SteamGameUpdater;
 import com.mayhew3.mediamogulscheduler.games.SteamPlaySessionGenerator;
@@ -40,17 +41,19 @@ public class TaskScheduleRunner {
   ExternalServiceHandler howLongServiceHandler;
   private IGDBProvider igdbProvider;
   private SteamProvider steamProvider;
+  private Integer person_id;
 
   private TaskScheduleRunner(SQLConnection connection,
                              @Nullable TVDBJWTProvider tvdbjwtProvider,
                              JSONReader jsonReader,
-                             ExternalServiceHandler howLongServiceHandler, IGDBProvider igdbProvider, SteamProvider steamProvider) {
+                             ExternalServiceHandler howLongServiceHandler, IGDBProvider igdbProvider, SteamProvider steamProvider, Integer person_id) {
     this.connection = connection;
     this.tvdbjwtProvider = tvdbjwtProvider;
     this.jsonReader = jsonReader;
     this.howLongServiceHandler = howLongServiceHandler;
     this.igdbProvider = igdbProvider;
     this.steamProvider = steamProvider;
+    this.person_id = person_id;
   }
 
   public static void main(String... args) throws URISyntaxException, SQLException, InterruptedException {
@@ -64,6 +67,11 @@ public class TaskScheduleRunner {
     ExternalServiceHandler tvdbServiceHandler = new ExternalServiceHandler(connection, ExternalServiceType.TVDB);
     ExternalServiceHandler howLongServiceHandler = new ExternalServiceHandler(connection, ExternalServiceType.HowLongToBeat);
     IGDBProviderImpl igdbProvider = new IGDBProviderImpl();
+    String mediaMogulPersonID = System.getenv("MediaMogulPersonID");
+    if (mediaMogulPersonID == null) {
+      throw new IllegalStateException("No env 'MediaMogulPersonID' found!");
+    }
+    Integer person_id = Integer.parseInt(mediaMogulPersonID);
 
     TVDBJWTProvider tvdbjwtProvider = null;
     try {
@@ -80,7 +88,8 @@ public class TaskScheduleRunner {
         jsonReader,
         howLongServiceHandler,
         igdbProvider,
-        new SteamProviderImpl());
+        new SteamProviderImpl(),
+        person_id);
     taskScheduleRunner.runUpdates();
   }
 
@@ -109,9 +118,11 @@ public class TaskScheduleRunner {
 
     // NIGHTLY
 //    addNightlyTask(new MetacriticTVUpdater(connection, UpdateMode.FULL));
+    addNightlyTask(new IGDBUpdateRunner(connection, igdbProvider, jsonReader, UpdateMode.SANITY));
     addNightlyTask(new TVDBUpdateRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.SANITY));
     addNightlyTask(new EpisodeGroupUpdater(connection));
     addNightlyTask(new CloudinaryUploader(connection, UpdateMode.FULL));
+    addNightlyTask(new GiantBombUpdater(connection));
   }
 
   private void addPeriodicTask(UpdateRunner updateRunner, Integer minutesBetween) {
