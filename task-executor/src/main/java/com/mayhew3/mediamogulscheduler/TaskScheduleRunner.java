@@ -1,10 +1,7 @@
 package com.mayhew3.mediamogulscheduler;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.mayhew3.mediamogulscheduler.games.GiantBombUpdater;
-import com.mayhew3.mediamogulscheduler.games.IGDBUpdateRunner;
-import com.mayhew3.mediamogulscheduler.games.SteamGameUpdater;
-import com.mayhew3.mediamogulscheduler.games.SteamPlaySessionGenerator;
+import com.mayhew3.mediamogulscheduler.games.*;
 import com.mayhew3.mediamogulscheduler.games.provider.IGDBProvider;
 import com.mayhew3.mediamogulscheduler.games.provider.IGDBProviderImpl;
 import com.mayhew3.mediamogulscheduler.games.provider.SteamProvider;
@@ -95,6 +92,9 @@ public class TaskScheduleRunner {
 
   private void createTaskList() {
     // REGULAR
+
+    addPeriodicTask(new HowLongToBeatUpdateRunner(connection, UpdateMode.QUICK, howLongServiceHandler),
+        30);
     addPeriodicTask(new SeriesDenormUpdater(connection),
         5);
     addPeriodicTask(new TVDBUpdateRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.MANUAL),
@@ -105,6 +105,7 @@ public class TaskScheduleRunner {
         1);
     addPeriodicTask(new TVDBSeriesMatchRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.SMART),
         3);
+
     addPeriodicTask(new IGDBUpdateRunner(connection, igdbProvider, jsonReader, UpdateMode.SMART),
         5);
     addPeriodicTask(new SteamPlaySessionGenerator(connection, 1),
