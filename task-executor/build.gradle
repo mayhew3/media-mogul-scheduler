@@ -9,6 +9,9 @@ apply from: file("$rootProject.projectDir/gradle/heroku/stage.gradle")
 
 dependencies {
     compile project(':common')
+
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    compile group: 'com.google.guava', name: 'guava', version: '27.1-jre'
 }
 
 mainClassName = 'com.mayhew3.mediamogulscheduler.TaskScheduleRunner'
