@@ -77,7 +77,7 @@ public class TaskScheduleRunner {
       e.printStackTrace();
     }
 
-//    setDriverPath();
+    maybeSetDriverPath();
 
     TaskScheduleRunner taskScheduleRunner = new TaskScheduleRunner(
         connection,
@@ -93,8 +93,6 @@ public class TaskScheduleRunner {
   private void createTaskList() {
     // REGULAR
 
-    addPeriodicTask(new HowLongToBeatUpdateRunner(connection, UpdateMode.QUICK, howLongServiceHandler),
-        30);
     addPeriodicTask(new SeriesDenormUpdater(connection),
         5);
     addPeriodicTask(new TVDBUpdateRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.MANUAL),
@@ -108,22 +106,25 @@ public class TaskScheduleRunner {
 
     addPeriodicTask(new IGDBUpdateRunner(connection, igdbProvider, jsonReader, UpdateMode.SMART),
         5);
-    addPeriodicTask(new SteamPlaySessionGenerator(connection, 1),
+    addPeriodicTask(new SteamPlaySessionGenerator(connection, person_id),
         10);
     addPeriodicTask(new TVDBUpdateRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.SMART),
         30);
-    addPeriodicTask(new SteamGameUpdater(connection, 1, steamProvider),
+    addPeriodicTask(new SteamGameUpdater(connection, person_id, steamProvider),
         60);
     addPeriodicTask(new CloudinaryUploader(connection, UpdateMode.QUICK),
         60);
 
     // NIGHTLY
-//    addNightlyTask(new MetacriticTVUpdater(connection, UpdateMode.FULL));
     addNightlyTask(new IGDBUpdateRunner(connection, igdbProvider, jsonReader, UpdateMode.SANITY));
+    addNightlyTask(new MetacriticTVUpdater(connection, UpdateMode.FULL));
+    addNightlyTask(new MetacriticGameUpdateRunner(connection, UpdateMode.UNMATCHED));
     addNightlyTask(new TVDBUpdateRunner(connection, tvdbjwtProvider, jsonReader, UpdateMode.SANITY));
     addNightlyTask(new EpisodeGroupUpdater(connection));
-    addNightlyTask(new CloudinaryUploader(connection, UpdateMode.FULL));
+    addNightlyTask(new SteamAttributeUpdateRunner(connection, UpdateMode.FULL));
+    addNightlyTask(new HowLongToBeatUpdateRunner(connection, UpdateMode.QUICK, howLongServiceHandler));
     addNightlyTask(new GiantBombUpdater(connection));
+    addNightlyTask(new CloudinaryUploader(connection, UpdateMode.FULL));
   }
 
   private void addPeriodicTask(UpdateRunner updateRunner, Integer minutesBetween) {
@@ -179,9 +180,16 @@ public class TaskScheduleRunner {
   }
 
 
-  private static void setDriverPath() {
-    String driverPath = System.getProperty("user.dir") + "\\resources\\chromedriver.exe";
-    System.setProperty("webdriver.chrome.driver", driverPath);
+  private static void maybeSetDriverPath() {
+    String envName = System.getenv("envName");
+    if (envName == null) {
+      throw new IllegalStateException("No env with 'envName' found!");
+    }
+
+    if (!"Heroku".equals(envName)) {
+      String driverPath = System.getProperty("user.dir") + "\\resources\\chromedriver.exe";
+      System.setProperty("webdriver.chrome.driver", driverPath);
+    }
   }
 
   protected static void debug(Object message) {
