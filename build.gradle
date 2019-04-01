@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     // https://mvnrepository.com/artifact/com.google.collections/google-collections
-    compile group: 'com.google.collections', name: 'google-collections', version: '1.0'
+//    compile group: 'com.google.collections', name: 'google-collections', version: '1.0'
     // https://mvnrepository.com/artifact/com.google.guava/guava
     compile group: 'com.google.guava', name: 'guava', version: '27.1-jre'
 
@@ -41,6 +41,9 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-context', version:'4.1.4.RELEASE'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'org.easytesting:fest-assert-core:2.0M10'
+    testCompile 'org.assertj:assertj-joda-time:2.2.0'
+    testCompile 'org.mockito:mockito-core:2.18.3'
 }
 
 jar {
