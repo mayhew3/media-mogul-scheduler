@@ -77,7 +77,7 @@ public class TaskScheduleRunner {
       e.printStackTrace();
     }
 
-    setDriverPath();
+//    setDriverPath();
 
     TaskScheduleRunner taskScheduleRunner = new TaskScheduleRunner(
         connection,
