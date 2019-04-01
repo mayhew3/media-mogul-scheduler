@@ -33,11 +33,11 @@ public class TaskScheduler {
 
     // DENORMS
 
-    JobDetail denormJob = newJob(SendUpdaterJob.class).build();
+    JobDetail denormJob = JobBuilder.newJob(SendUpdaterJob.class).build();
 
-    Trigger denormTrigger = newTrigger()
+    Trigger denormTrigger = TriggerBuilder.newTrigger()
         .startNow()
-        .withSchedule(repeatMinutelyForever(5))
+        .withSchedule(SimpleScheduleBuilder.repeatMinutelyForever(5))
         .build();
 
     scheduler.scheduleJob(denormJob, denormTrigger);
@@ -45,11 +45,11 @@ public class TaskScheduler {
 
     // TVDB
 
-    JobDetail tvdbJob = newJob(SendTVDBUpdaterJob.class).build();
+    JobDetail tvdbJob = JobBuilder.newJob(SendTVDBUpdaterJob.class).build();
 
-    Trigger tvdbTrigger = newTrigger()
+    Trigger tvdbTrigger = TriggerBuilder.newTrigger()
         .startNow()
-        .withSchedule(repeatMinutelyForever(30))
+        .withSchedule(SimpleScheduleBuilder.repeatMinutelyForever(30))
         .build();
 
     scheduler.scheduleJob(tvdbJob, tvdbTrigger);
