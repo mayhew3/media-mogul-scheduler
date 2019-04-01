@@ -67,12 +67,12 @@ public class IGDBUpdateRunner implements UpdateRunner {
 
   @Override
   public @Nullable UpdateMode getUpdateMode() {
-    return null;
+    return updateMode;
   }
 
   @Override
   public String getUniqueIdentifier() {
-    return "igdb_updater";
+    return "IGDB Updater";
   }
 
   @Override
