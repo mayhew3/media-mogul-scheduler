@@ -24,7 +24,24 @@ dependencies {
 	testCompile 'junit:junit:4.12'
 }
 
+jar {
+	manifest {
+		attributes("Implementation-Title": "Task Schedule Runner",
+				"Implementation-Version": version,
+				"Main-Class": "com.mayhew3.mediamogulscheduler.TaskScheduleRunner")
+	}
+	archiveFileName = "media-mogul-scheduler.jar"
+//    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
 task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
+
+task copyToLib(type: Copy) {
+	into "$buildDir/libs"
+	from(configurations.compile)
+}
+
+stage.dependsOn(copyToLib)
 
 mainClassName = 'com.mayhew3.mediamogulscheduler.TaskScheduleRunner'
