@@ -1,1 +1,1 @@
-worker: java -cp build/libs/*.jar  -jar build/libs/media-mogul-scheduler.jar
+worker: java -cp build/libs/*:build/classes/ com.mayhew3.mediamogulscheduler.TaskScheduleRunner
